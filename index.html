@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+
+<body>
+  <h1>Page: <label id="pageNumber">1</label></h1>
+  <div>
+    <button onclick="nextPage()">Next</button>
+    <button onclick="previousPage()">Previous</button>
+  </div>
+  <hr>
+  <div id="users">
+    Users will be loaded soon !!
+  </div>
+  <script>
+    function nextPage() {
+      let page = parseInt($("#pageNumber").html());
+      if (page == 2) {
+        alert("Page must be between 1 and 2");
+        return;
+      }
+      page++;
+      drawPage(page);
+    }
+
+    function previousPage() {
+      let page = parseInt($("#pageNumber").html());
+      if (page == 1) {
+        alert("Page must be between 1 and 2");
+        return;
+      }
+      page--;
+      drawPage(page);
+    }
+
+    function drawPage(page) {
+      $.ajax({
+        type: "GET",
+        url: "https://reqres.in/api/users",
+        data: `page=${page}`,
+        success: function (response) {
+          console.log("a");
+          drawUsers(response.data);
+          $("#pageNumber").html(page + "");
+        },
+        error: function (error) {
+          alert("Something went wrong");
+        }
+      });
+
+      console.log("b");
+    }
+
+    function drawUsers(users) {
+      $("#users").empty();
+      for (let index = 0; index < users.length; index++) {
+        const user = users[index];
+        $("#users").append(drawSingleUser(user));
+      }
+    }
+
+    function drawSingleUser(user) {
+      let element = $("<div></div>");
+      element.append(`<h2>${user.first_name} ${user.last_name}</h2>`);
+      element.append("<br>");
+      element.append(`<img src=${user.avatar}>`);
+      //$("#users").append(element);
+      return element;
+    }
+  </script>
+</body>
+
+</html>
